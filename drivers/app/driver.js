@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const homey_1 = __importDefault(require("homey"));
 const axios_1 = __importDefault(require("axios"));
-class AppDriver extends homey_1.default.Driver {
+class Driver extends homey_1.default.Driver {
     /**
      * onInit is called when the driver is initialized.
      */
     async onInit() {
-        this.log('AppDriver has been initialized');
+        this.log('MyDriver has been initialized');
         const cardActionSendMessage = this.homey.flow.getActionCard('send-message');
         cardActionSendMessage.registerRunListener(async (args) => {
             const { title } = args;
@@ -49,4 +49,4 @@ class AppDriver extends homey_1.default.Driver {
         });
     }
 }
-module.exports = AppDriver;
+module.exports = Driver;
