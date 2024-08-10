@@ -3,21 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const homey_1 = __importDefault(require("homey"));
 const axios_1 = __importDefault(require("axios"));
+const homey_1 = __importDefault(require("homey"));
 const https_1 = __importDefault(require("https"));
-class Device extends homey_1.default.Device {
-    /**
-     * onInit is called when the device is initialized.
-     */
-    async onInit() {
-        const settings = this.getSettings();
-        let AxiosInstance = axios_1.default.create({
+class AppDevice extends homey_1.default.Device {
+    constructor() {
+        super(...arguments);
+        this.axiosInstance = axios_1.default.create({
             httpsAgent: new https_1.default.Agent({
                 rejectUnauthorized: false
             })
         });
-        this.log(settings.name + ' has been initialized');
+    }
+    /**
+     * onInit is called when the device is initialized.
+     */
+    async onInit() {
+        this.settings = this.getSettings();
+        this.log(this.settings.name + ' has been initialized');
         let device_urlNotValid = true;
         let device_unavailable = false;
         let availability_interval = setInterval(async () => {
@@ -33,7 +36,7 @@ class Device extends homey_1.default.Device {
                 }
             }
             if (!device_urlNotValid) {
-                let promise = await AxiosInstance({
+                let promise = await this.axiosInstance({
                     method: "get",
                     url: await this.getServerUrl(),
                     data: "",
@@ -93,12 +96,10 @@ class Device extends homey_1.default.Device {
         this.log(this.getSettings().name + ' has been deleted');
     }
     async getServerUrl() {
-        const settings = this.getSettings();
-        return settings.url;
+        return this.settings.url;
     }
     async getToken() {
-        const settings = this.getSettings();
-        return settings.token;
+        return this.settings.token;
     }
 }
-module.exports = Device;
+module.exports = AppDevice;
